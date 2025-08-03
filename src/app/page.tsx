@@ -1,103 +1,134 @@
-import Image from "next/image";
+"use client";
+import VideoBackground from "../components/VideoBackground";
+import { FaPlayCircle } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import BounceButton from "../components/BounceButton";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // Prepare audio that will play after the user presses Play
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  const audio = useMemo(() => {
+    if (typeof Audio !== "undefined") {
+      return new Audio(encodeURI("/10 Don't Reach Across My Plate.m4a"));
+    }
+    // Fallback (SSR) – return null-like object
+    return undefined as unknown as HTMLAudioElement;
+  }, []);
+
+  // Track whether the user has pressed the play button
+  const [hasStarted, setHasStarted] = useState(false);
+  // Control when the content container becomes visible
+  const [showContainer, setShowContainer] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const handleMainClick = () => {
+    if (!hasStarted || !audio) return;
+    const newMuted = !audio.muted;
+    audio.muted = newMuted;
+    setIsMuted(newMuted);
+  };
+
+  // Once the play button is pressed, reveal the container after a short delay
+  useEffect(() => {
+    if (hasStarted) {
+      const timer = setTimeout(() => setShowContainer(true), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasStarted]);
+
+  return (
+    <>
+      <VideoBackground
+        ref={videoRef}
+        videoUrl="/primary-bg-video.mp4"
+        overlay={true}
+        overlayOpacity={showContainer ? 0.5 : 0}
+        overlayColor="#ffffff"
+        scale={1.2}
+        autoPlay={false}
+        loop
+      />
+      <main
+        onClick={handleMainClick}
+        className="flex items-center justify-center min-h-screen relative z-10"
+      >
+        {/* Play Button */}
+        <BounceButton
+          aria-label="Play"
+          onClick={async () => {
+            setHasStarted(true);
+            try {
+              audio?.play();
+            } catch (err) {
+              console.error("Failed to play audio", err);
+            }
+            try {
+              if (videoRef.current) {
+                await videoRef.current.play();
+              }
+            } catch (err) {
+              console.error("Failed to play video", err);
+            }
+          }}
+          initial={{ opacity: 1, y: 0 }}
+          animate={
+            hasStarted
+              ? { opacity: 0, y: -20, pointerEvents: "none" }
+              : { opacity: 1, y: 0 }
+          }
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="text-white bg-transparent px-0 py-0 border-0 outline-none cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        >
+          <FaPlayCircle size={96} color="black" />
+        </BounceButton>
+
+        {/* Content Container */}
+        <AnimatePresence>
+          {showContainer && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+              className="p-8 text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center max-w-2xl gap-6"
+            >
+              <h1 className="text-5xl font-extrabold tracking-tight">
+                Celebrate Mid Life With Me.
+              </h1>
+              <p className="text-xl">
+                Join me for an evening of maturity, intellectualism, and
+                pedantic banter followed by a night of denial and debauchery.
+              </p>
+              <p className="text-xl leading-relaxed">
+                <strong>Friday, Aug 29th, 7pm</strong>
+              </p>
+              <p className="text-4xl leading-relaxed font-(family-name:--font-erica-one)">
+                <a
+                  className="text-emerald-400 text-shadow-lg"
+                  href="https://www.salylimonseattle.com/"
+                >
+                  Sal Y Limón
+                </a>{" "}
+                +{" "}
+                <a
+                  className="text-pink-500 text-shadow-lg"
+                  href="https://www.ozziesinseattle.com/"
+                >
+                  Ozzies
+                </a>
+              </p>
+              <p className="text-lg leading-relaxed">Can you make it?</p>
+              <div className="flex justify-center gap-4">
+                <BounceButton>Yes</BounceButton>
+                <BounceButton>No</BounceButton>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </>
   );
 }
