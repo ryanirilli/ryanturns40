@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         lato: ["var(--font-lato)", "sans-serif"],
+        kavoon: ["var(--font-kavoon)", "cursive"],
       },
     },
   },

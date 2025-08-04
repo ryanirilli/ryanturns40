@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import React from "react";
 
 import { HTMLMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type BounceButtonProps = HTMLMotionProps<"button"> & {
   children: React.ReactNode;
@@ -21,7 +22,9 @@ const BounceButton = React.forwardRef<HTMLButtonElement, BounceButtonProps>(
           transition: { type: "spring", stiffness: 300, damping: 15 },
         }}
         {...rest}
-        className={`text-white bg-black border-0 outline-none cursor-pointer px-4 py-2 rounded-md ${className}`}
+        className={cn(
+          `border-0 outline-none cursor-pointer px-4 py-2 rounded-md ${className}`
+        )}
       >
         {children}
       </motion.button>

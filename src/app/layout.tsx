@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Lato, Erica_One } from "next/font/google";
+import { Lato, Kavoon } from "next/font/google";
 
 // Configure Lato font
 const lato = Lato({
@@ -8,11 +8,11 @@ const lato = Lato({
   variable: "--font-lato",
 });
 
-// Configure Erica One font
-const ericaOne = Erica_One({
+// Configure Kavoon font
+const kavoon = Kavoon({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-erica-one",
+  variable: "--font-kavoon",
 });
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={[lato.variable, ericaOne.variable].join(" ")}>
+    <html lang="en" className={[lato.variable, kavoon.variable].join(" ")}>
       <body>{children}</body>
     </html>
   );
