@@ -147,15 +147,15 @@ export default function Home() {
               onClick={(e) => e.stopPropagation()}
               className="w-[300px] sm:w-full p-0 sm:p-8 text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center max-w-2xl gap-6"
             >
-              <h1 className="text-5xl font-extrabold tracking-tight">
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
                 Celebrate Mid Life With Me!
               </h1>
-              <p className="text-xl">
+              <p className="text-lg sm:text-xl">
                 Join me for an evening of maturity, intellectualism, and
                 pedantic banter followed by a night of denial and debauchery.
               </p>
               <div>
-                <p className="mb-0 text-4xl leading-relaxed font-(family-name:--font-kavoon) mt-4">
+                <p className="mb-0 text-2xl sm:text-4xl leading-relaxed font-(family-name:--font-kavoon) mt-4">
                   <a
                     className="text-pink-500 text-shadow-lg"
                     href="https://www.salylimonseattle.com/"
