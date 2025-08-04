@@ -46,12 +46,10 @@ export default function Home() {
   };
 
   // React Hook Form setup for RSVP (Yes dialog)
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<{ name1: string; name2?: string }>({
+  const { register, handleSubmit, reset } = useForm<{
+    name1: string;
+    name2?: string;
+  }>({
     defaultValues: {
       name1: "",
       name2: "",
@@ -197,7 +195,7 @@ export default function Home() {
                         <div className="flex flex-col items-center gap-4 py-8">
                           <FaCheckCircle size={64} className="text-green-600" />
                           <h3 className="text-2xl font-bold">
-                            You're on the list!
+                            You&apos;re on the list!
                           </h3>
                           <p className="text-lg">See you on Aug 29th 🎉</p>
                         </div>
