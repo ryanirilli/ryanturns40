@@ -31,7 +31,7 @@ export default function Home() {
   const [hasStarted, setHasStarted] = useState(false);
   // Control when the content container becomes visible
   const [showContainer, setShowContainer] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [, setIsMuted] = useState(false);
 
   const handleMainClick = () => {
     if (!hasStarted || !audio) return;

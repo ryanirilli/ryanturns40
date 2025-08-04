@@ -92,4 +92,6 @@ const VideoBackground = React.forwardRef<
   }
 );
 
+VideoBackground.displayName = "VideoBackground";
+
 export default VideoBackground;
