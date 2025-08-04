@@ -1,9 +1,11 @@
 "use client";
 import VideoBackground from "../components/VideoBackground";
-import { FaPlayCircle } from "react-icons/fa";
+import { FaPlayCircle, FaCheckCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import BounceButton from "../components/BounceButton";
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { supabase } from "../lib/supabaseClient";
 import {
   Dialog,
   DialogTrigger,
@@ -32,12 +34,52 @@ export default function Home() {
   // Control when the content container becomes visible
   const [showContainer, setShowContainer] = useState(false);
   const [, setIsMuted] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(
+    null
+  );
 
   const handleMainClick = () => {
     if (!hasStarted || !audio) return;
     const newMuted = !audio.muted;
     audio.muted = newMuted;
     setIsMuted(newMuted);
+  };
+
+  // React Hook Form setup for RSVP (Yes dialog)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<{ name1: string; name2?: string }>({
+    defaultValues: {
+      name1: "",
+      name2: "",
+    },
+  });
+
+  const onYesSubmit = async ({
+    name1,
+    name2,
+  }: {
+    name1: string;
+    name2?: string;
+  }) => {
+    // reset previous status
+    setSubmitStatus(null);
+
+    const { error } = await supabase.from("rsvps").insert({
+      name1,
+      name2: name2 || null,
+    });
+
+    if (error) {
+      console.error("Failed to save RSVP", error);
+      setSubmitStatus("error");
+    } else {
+      reset();
+      setSubmitStatus("success");
+    }
   };
 
   // Once the play button is pressed, reveal the container after a short delay
@@ -103,7 +145,7 @@ export default function Home() {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
-              className="p-8 text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center max-w-2xl gap-6"
+              className="w-[300px] sm:w-full p-0 sm:p-8 text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center max-w-2xl gap-6"
             >
               <h1 className="text-5xl font-extrabold tracking-tight">
                 Celebrate Mid Life With Me!
@@ -134,82 +176,106 @@ export default function Home() {
                   <strong>Friday, Aug 29th, 7pm</strong>
                 </p>
               </div>
+              <div className="border-1 border-black rounded-lg p-4 bg-white">
+                <p className="text-lg leading-relaxed mb-4">Can you make it?</p>
+                <div className="flex justify-center gap-4">
+                  {/* Yes Dialog */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <BounceButton className="text-white bg-black">
+                        Yes
+                      </BounceButton>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md bg-white text-black dark:bg-white">
+                      <DialogHeader>
+                        <DialogTitle>Hell yeah</DialogTitle>
+                        <DialogDescription>
+                          Very excited to see you!
+                        </DialogDescription>
+                      </DialogHeader>
+                      {submitStatus === "success" ? (
+                        <div className="flex flex-col items-center gap-4 py-8">
+                          <FaCheckCircle size={64} className="text-green-600" />
+                          <h3 className="text-2xl font-bold">
+                            You're on the list!
+                          </h3>
+                          <p className="text-lg">See you on Aug 29th 🎉</p>
+                        </div>
+                      ) : (
+                        <>
+                          {submitStatus === "error" && (
+                            <div className="bg-red-500 text-white p-2 rounded text-center">
+                              Damn, something went wrong. Send me a text
+                              instead!
+                            </div>
+                          )}
+                          <form
+                            className="grid gap-4"
+                            onSubmit={handleSubmit(onYesSubmit)}
+                          >
+                            <div className="grid gap-2 text-left">
+                              <label htmlFor="name1">Your Name</label>
+                              <input
+                                id="name1"
+                                type="text"
+                                className="border rounded px-2 py-1"
+                                {...register("name1", { required: true })}
+                              />
+                            </div>
+                            <div className="grid gap-2 text-left">
+                              <label htmlFor="name2">
+                                (Optional) Guest Name
+                              </label>
+                              <input
+                                id="name2"
+                                type="text"
+                                className="border rounded px-2 py-1"
+                                {...register("name2")}
+                              />
+                            </div>
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <BounceButton className="bg-white text-black">
+                                  Cancel
+                                </BounceButton>
+                              </DialogClose>
+                              <BounceButton
+                                type="submit"
+                                className="text-white bg-black"
+                              >
+                                Submit
+                              </BounceButton>
+                            </DialogFooter>
+                          </form>
+                        </>
+                      )}
+                    </DialogContent>
+                  </Dialog>
 
-              <p className="text-lg leading-relaxed">Can you make it?</p>
-              <div className="flex justify-center gap-4">
-                {/* Yes Dialog */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <BounceButton className="text-white bg-black">
-                      Yes
-                    </BounceButton>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-white text-black dark:bg-white">
-                    <DialogHeader>
-                      <DialogTitle>Hell yeah</DialogTitle>
-                      <DialogDescription>
-                        Very excited to see you!
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form className="grid gap-4">
-                      <div className="grid gap-2 text-left">
-                        <label htmlFor="name1">Your Name</label>
-                        <input
-                          id="name1"
-                          name="name1"
-                          type="text"
-                          className="border rounded px-2 py-1"
-                        />
-                      </div>
-                      <div className="grid gap-2 text-left">
-                        <label htmlFor="name2">(Optional) Guest Name</label>
-                        <input
-                          id="name2"
-                          name="name2"
-                          type="text"
-                          className="border rounded px-2 py-1"
-                        />
-                      </div>
+                  {/* No Dialog */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <BounceButton className="text-white bg-black">
+                        No
+                      </BounceButton>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md bg-white text-black dark:bg-white">
+                      <DialogHeader>
+                        <DialogTitle>Oh for real?!</DialogTitle>
+                        <DialogDescription>
+                          Fine. whatever. you&apos;re dead to me.
+                        </DialogDescription>
+                      </DialogHeader>
                       <DialogFooter>
                         <DialogClose asChild>
-                          <BounceButton className="bg-white text-black">
-                            Cancel
+                          <BounceButton className="bg-white-200 text-black">
+                            Close
                           </BounceButton>
                         </DialogClose>
-                        <BounceButton
-                          type="submit"
-                          className="text-white bg-black"
-                        >
-                          Submit
-                        </BounceButton>
                       </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-
-                {/* No Dialog */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <BounceButton className="text-white bg-black">
-                      No
-                    </BounceButton>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-white text-black dark:bg-white">
-                    <DialogHeader>
-                      <DialogTitle>Oh for real?!</DialogTitle>
-                      <DialogDescription>
-                        Fine. whatever. you&apos;re dead to me.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <BounceButton className="bg-white-200 text-black">
-                          Close
-                        </BounceButton>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </motion.div>
           )}
