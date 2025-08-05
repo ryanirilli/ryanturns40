@@ -83,7 +83,7 @@ export default function Home() {
   // Once the play button is pressed, reveal the container after a short delay
   useEffect(() => {
     if (hasStarted) {
-      const timer = setTimeout(() => setShowContainer(true), 5000);
+      const timer = setTimeout(() => setShowContainer(true), 15000);
       return () => clearTimeout(timer);
     }
   }, [hasStarted]);
@@ -92,13 +92,16 @@ export default function Home() {
     <>
       <VideoBackground
         ref={videoRef}
-        videoUrl="/primary-bg-video.mp4"
+        videoUrls={[
+          "/primary-bg-video.mp4",
+          "/primary-bg-video-2.mp4",
+          "/primary-bg-video-3.mp4",
+        ]}
         overlay={true}
         overlayOpacity={showContainer ? 0.5 : 0}
         overlayColor="#ffffff"
         scale={1.2}
         autoPlay={false}
-        loop
       />
       <main
         onClick={handleMainClick}
@@ -141,7 +144,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              transition={{ duration: 3.5, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
               className="w-[300px] sm:w-full p-0 sm:p-8 text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center max-w-2xl gap-6"
             >
@@ -174,7 +177,7 @@ export default function Home() {
                   <strong>Friday, Aug 29th, 7pm</strong>
                 </p>
               </div>
-              <div className="border-1 border-black rounded-lg p-4 bg-white">
+              <div className="border-1 border-pink-500 rounded-lg py-4 px-8 bg-white">
                 <p className="text-lg leading-relaxed mb-4">Can you make it?</p>
                 <div className="flex justify-center gap-4">
                   {/* Yes Dialog */}
@@ -261,7 +264,7 @@ export default function Home() {
                       <DialogHeader>
                         <DialogTitle>Oh for real?!</DialogTitle>
                         <DialogDescription>
-                          Fine. whatever. you&apos;re dead to me.
+                          Fine. Whatever. You&apos;re dead to me.
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter>

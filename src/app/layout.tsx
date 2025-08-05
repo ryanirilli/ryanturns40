@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Lato, Kavoon } from "next/font/google";
+import type { Metadata } from "next";
 
 // Configure Lato font
 const lato = Lato({
@@ -14,6 +15,13 @@ const kavoon = Kavoon({
   weight: ["400"],
   variable: "--font-kavoon",
 });
+
+// Default metadata applied to every page
+export const metadata: Metadata = {
+  openGraph: {
+    images: ["/meta-img.png"],
+  },
+};
 
 export default function RootLayout({
   children,
