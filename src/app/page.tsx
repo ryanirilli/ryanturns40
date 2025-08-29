@@ -32,8 +32,8 @@ export default function Home() {
   // Track whether the user has pressed the play button
   const [hasStarted, setHasStarted] = useState(false);
   // Control when the content container becomes visible
-  const [showContainer, setShowContainer] = useState(false);
-  const [, setIsMuted] = useState(false);
+  const [showContainer, setShowContainer] = useState(true);
+  const [, setIsMuted] = useState(true);
   const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(
     null
   );
@@ -108,12 +108,12 @@ export default function Home() {
         className="flex items-center justify-center min-h-screen relative z-10"
       >
         {/* Play Button */}
-        <BounceButton
+        {/* <BounceButton
           aria-label="Play"
           onClick={async () => {
             setHasStarted(true);
             try {
-              audio?.play();
+              //audio?.play();
             } catch (err) {
               console.error("Failed to play audio", err);
             }
@@ -135,7 +135,7 @@ export default function Home() {
           className="text-white bg-transparent px-0 py-0 border-0 outline-none cursor-pointer absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         >
           <FaPlayCircle size={96} color="black" />
-        </BounceButton>
+        </BounceButton> */}
 
         {/* Content Container */}
         <AnimatePresence>
@@ -144,7 +144,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 3.5, ease: "easeOut" }}
+              transition={{ duration: 1, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
               className="w-[300px] sm:w-full p-0 sm:p-8 text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center max-w-2xl gap-6"
             >
@@ -177,10 +177,9 @@ export default function Home() {
                   <strong>Friday, Aug 29th, 7pm</strong>
                 </p>
               </div>
-              <div className="border-1 border-pink-500 rounded-lg py-4 px-8 bg-white">
+              {/* <div className="border-1 border-pink-500 rounded-lg py-4 px-8 bg-white">
                 <p className="text-lg leading-relaxed mb-4">Can you make it?</p>
-                <div className="flex justify-center gap-4">
-                  {/* Yes Dialog */}
+                <div className="flex justify-center gap-4">                  
                   <Dialog>
                     <DialogTrigger asChild>
                       <BounceButton className="text-white bg-black">
@@ -252,8 +251,7 @@ export default function Home() {
                       )}
                     </DialogContent>
                   </Dialog>
-
-                  {/* No Dialog */}
+                  
                   <Dialog>
                     <DialogTrigger asChild>
                       <BounceButton className="text-white bg-black">
@@ -277,7 +275,7 @@ export default function Home() {
                     </DialogContent>
                   </Dialog>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           )}
         </AnimatePresence>
