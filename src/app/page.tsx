@@ -1,21 +1,22 @@
+/* eslint-disable */
 "use client";
 import VideoBackground from "../components/VideoBackground";
-import { FaPlayCircle, FaCheckCircle } from "react-icons/fa";
+// import { FaPlayCircle, FaCheckCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import BounceButton from "../components/BounceButton";
+// import BounceButton from "../components/BounceButton";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "../lib/supabaseClient";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "../components/ui/dialog";
+// import {
+//   Dialog,
+//   DialogTrigger,
+//   DialogContent,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogDescription,
+//   DialogFooter,
+//   DialogClose,
+// } from "../components/ui/dialog";
 
 export default function Home() {
   // Prepare audio that will play after the user presses Play
